@@ -1,5 +1,10 @@
 FROM alpine:3.15
-
+ENV NOTIFY="" \
+NOTIFY_DEBUG="" \
+NOTIFY_URLS="" \
+EXCLUDE="" \
+CRON_TIME="" \
+HOSTNAME=""
 RUN apk --update add --no-cache \
     lighttpd \
     bash \
@@ -40,7 +45,6 @@ RUN apk --update add --no-cache \
 COPY app* /app/ 
 ADD lighttpd.conf /etc/lighttpd/lighttpd.conf 
 RUN adduser www-data -G www-data -H -s /bin/bash -D \
-&& curl -L "https://raw.githubusercontent.com/mag37/dockcheck/main/dc_brief.sh" -o /app/dockcheck.sh \
 && curl -L "https://download.docker.com/linux/static/stable/x86_64/docker-23.0.1.tgz" -o /app/docker.tgz \
 && curl -L "https://github.com/regclient/regclient/releases/download/v0.4.5/regctl-linux-amd64" -o /app/regctl \
 && pip install --no-cache-dir apprise

@@ -299,3 +299,8 @@ tr:nth-child(odd) {
   background-color: #474747;
   color: rgb(100, 21, 21)
   }
+
+
+.hide{
+   display:none;
+}

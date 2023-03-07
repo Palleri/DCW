@@ -1,51 +1,54 @@
-<?php 
-    ini_set('max_execution_time', '300');
-    set_time_limit(300);
-function bg()
-{
-  $create_file_update = fopen("/var/www/update.txt", "w") or die("Unable to open file!");
-  $txt = '1';
-  fwrite($create_file_update, $txt);
-  $read_file = file_get_contents('/var/www/update.txt');
-  if($read_file == '1'){
-    while($read_file == '1'){
-      $read_file = file_get_contents('/var/www/update.txt');
-      if($read_file == '1'){
-      flush();
-      }else{
-      $url = $_SERVER['REQUEST_URI'];
-      $url_stripped = str_replace("?update", "", $url);
-      echo "<script>window.location = '$url_stripped'</script>";
-      }
-    }
-  }
-}
-?>
 <html>
     <head>
     <title>Docker Updates</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="favico.jpeg">
+
+    <script src="jquery.js"></script>
+<script>
+
+$(document).on("click", "button", function(){   
+    $.get("update.php", function(data){
+        $(".loading-container hide").html(data);
+        $(".content").html(data);
+    });       
+});
+
+
+$(document).on({
+    ajaxStart: function(){
+        $(".loading-container").removeClass("hide");
+        $(".loading").removeClass("hide");
+        $("#loading-text").removeClass("hide");
+        $(".content").addClass("hide");
+    },
+    ajaxStop: function(){ 
+        $(".loading-container").addClass("hide");
+        $(".loading").addClass("hide");
+        $("#loading-text").addClass("hide");
+        $(".content").RemoveClass("hide");
+        location.reload(true);
+    }    
+});
+</script>
+
     </head>
 <body>
 <?php
 ?>
+<div class="loading-container hide">
+      <div class="loading"></div>
+      <div id="loading-text">loading</div>
+      </div>
 <div class="content">
-<h1><a href=index.php>Dockcheck</a></h1>
-<?php
-if(isset($_GET['update'])){
-  unset($_GET['update']);
-  echo "<div class=\"loading-container\">
-  <div class=\"loading\"></div>
-  <div id=\"loading-text\">loading</div>
-  </div>";
-  echo "This might take a while, it depends on how many containers are running";
-  bg();
-}
 
-?>
+<h1><a href=index.php>Dockcheck</a></h1>
+
+
+ 
 <header>
-  <h1><a href=index.php?update>Check for updates</a></h1>
+<h1><button type="button">Check for updates</button></h1>
+  <!-- <h1><div id="updates" href=index.php?update>Check for updates</a></h1></div -->
 </header>
 <div class="row">
   <div class="column">
@@ -59,29 +62,26 @@ if(isset($_GET['update'])){
 
 $conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
 if (!$conn) {
-  echo "An error occurred.\n";
-  exit;
+    echo "An error occurred.\n";
+    exit;
 }
 
 $result = pg_query($conn, "SELECT * FROM containers WHERE latest='true'");
 if (!$result) {
-  echo "skit hände.\n";
-  exit;
+    echo "skit hände.\n";
+    exit;
 }
 
 
-$arr = pg_fetch_array($result);
+
 
 
 while ( $data  = pg_fetch_array($result))
 {
-
-
-
-  echo '<tr>';
-  echo '<td>'. $data["name"] .'</td>';
-  echo '<td>'. $data["host"] .'</td>';
-  echo '</tr>';
+    echo '<tr>';
+    echo '<td>'. $data["name"] .'</td>';
+    echo '<td>'. $data["host"] .'</td>';
+    echo '</tr>';
 }
 
 
@@ -101,29 +101,24 @@ while ( $data  = pg_fetch_array($result))
 
 $conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
 if (!$conn) {
-  echo "An error occurred.\n";
-  exit;
+    echo "An error occurred.\n";
+    exit;
 }
 
 $result = pg_query($conn, "SELECT * FROM containers WHERE new='true'");
 if (!$result) {
-  echo "skit hände.\n";
-  exit;
+    echo "skit hände.\n";
+    exit;
 }
 
-
-$arr = pg_fetch_array($result);
 
 
 while ( $data  = pg_fetch_array($result))
 {
-
-
-
-  echo '<tr>';
-  echo '<td>'. $data["name"] .'</td>';
-  echo '<td>'. $data["host"] .'</td>';
-  echo '</tr>';
+    echo '<tr>';
+    echo '<td>'. $data["name"] .'</td>';
+    echo '<td>'. $data["host"] .'</td>';
+    echo '</tr>';
 }
 
 
@@ -159,15 +154,8 @@ if (!$result) {
   exit;
 }
 
-
-$arr = pg_fetch_array($result);
-
-
 while ( $data  = pg_fetch_array($result))
 {
-
-
-
   echo '<tr>';
   echo '<td>'. $data["name"] .'</td>';
   echo '<td>'. $data["host"] .'</td>';

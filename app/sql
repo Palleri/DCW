@@ -12,6 +12,7 @@ CREATE TABLE STATE(
    RUNNING        TEXT  NOT NULL
 );
 
+psql -U postgres -d postgres
 INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
 VALUES('srv1','plex','false','false','true');
 INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
@@ -21,4 +22,4 @@ VALUES('srv2','prowlarr','true','false','false');
 INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
 VALUES('srv2','wireguard','true','false','false');
 INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
-VALUES('srv3','proxy','false','true','false');
+VALUES('srv3','proxy','true','false','false');

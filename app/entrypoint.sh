@@ -4,7 +4,9 @@ echo "# Starting Dockcheck-web #"
 echo "# Checking for new updates #"
 echo "# This might take a while, it depends on how many containers are running #"
 
-
+if [ -n "$HOSTNAME" ]; then
+        echo $HOSTNAME > /etc/hostname
+fi
 
 if [ -n "$CRON_TIME" ]; then
     
@@ -34,7 +36,7 @@ if [ "$NOTIFY" = "true" ]; then
 fi
 
 chmod +x /app/postgres
-/app/postgres
+/app/postgres > /dev/null 2>&1
 
 
 
@@ -47,7 +49,11 @@ mkdir -p /run/lighttpd/
 chown www-data. /run/lighttpd/
 cp /app/src/index.php /var/www/index.php
 cp /app/src/style.css /var/www/style.css
+cp /app/src/update.php /var/www/update.php
+cp /app/src/jquery.js /var/www/jquery.js
 chmod +x /app/dockcheck*
+chmod +x /app/regctl
+mv /app/regctl /usr/bin/regctl
 cp /app/dockcheck /etc/periodic/daily
 run-parts /etc/periodic/daily/
 chmod +x /app/watcher.sh
