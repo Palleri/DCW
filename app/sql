@@ -1,0 +1,24 @@
+CREATE TABLE CONTAINERS(
+   HOST           TEXT,
+   NAME           TEXT,
+   LATEST         TEXT,
+   ERROR          TEXT,
+   NEW            TEXT
+);
+
+
+CREATE TABLE STATE(
+   ID INT PRIMARY KEY   NOT NULL,
+   RUNNING        TEXT  NOT NULL
+);
+
+INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
+VALUES('srv1','plex','false','false','true');
+INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
+VALUES('srv1','nginx','false','false','true');
+INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
+VALUES('srv2','prowlarr','true','false','false');
+INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
+VALUES('srv2','wireguard','true','false','false');
+INSERT INTO CONTAINERS(HOST,NAME,LATEST,ERROR,NEW)
+VALUES('srv3','proxy','false','true','false');
