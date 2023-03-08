@@ -4,7 +4,7 @@ NOTIFY_DEBUG="" \
 NOTIFY_URLS="" \
 EXCLUDE="" \
 CRON_TIME="" \
-HOSTNAME=""
+POSTGRES_PASSWORD=""
 RUN apk --update add --no-cache \
     lighttpd \
     bash \

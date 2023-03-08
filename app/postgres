@@ -1,6 +1,5 @@
 #!/bin/bash
 #POSTGRESQL INSTALL
-
 mkdir /run/postgresql
 adduser postgres -G postgres -H -s /bin/bash -D 
 chown postgres:postgres /run/postgresql/
@@ -17,19 +16,16 @@ chown -R postgres:postgres /var/lib/postgresql
 
 
 su postgres -c "pg_ctl start -D /var/lib/postgresql/data"
-su postgres
-psql -d postgres -U postgres <<EOF
-CREATE TABLE CONTAINERS(
-   HOST           TEXT,
-   NAME           TEXT,
-   LATEST         TEXT,
-   ERROR          TEXT,
-   NEW            TEXT
-);
-EOF
 
-psql -d postgres -U postgres <<EOF
-CREATE TABLE STATE(
-   RUNNING        TEXT  NOT NULL
-);
-EOF
+
+if [ -n $POSTGRES_PASSWORD ]; then
+psql -d postgres -U postgres -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';"
+psql -d postgres -U postgres -c "CREATE TABLE CONTAINERS(HOST TEXT,NAME TEXT,LATEST TEXT,ERROR TEXT,NEW TEXT);"
+
+psql -d postgres -U postgres -c "CREATE TABLE EXPORTERS(HOST TEXT,ACTIVE TEXT,DONE TEXT);"
+
+psql -d postgres -U postgres -c "CREATE TABLE STATE(RUNNING TEXT NOT NULL);"
+psql -d postgres -U postgres -c "INSERT INTO STATE (RUNNING) VALUES('false');"
+else
+echo "Postgres password cannot be empty"
+fi

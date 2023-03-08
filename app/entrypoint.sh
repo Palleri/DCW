@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo $POSTGRES_PASSWORD
+
 echo "# Starting Dockcheck-web #"
 echo "# Checking for new updates #"
 echo "# This might take a while, it depends on how many containers are running #"
