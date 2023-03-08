@@ -304,3 +304,14 @@ tr:nth-child(odd) {
 .hide{
    display:none;
 }
+button {
+    background-color: #474747;
+    border: none;
+    color: white;
+    padding: 4px 40px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16;
+    border: 2px solid #00000054;
+  }
