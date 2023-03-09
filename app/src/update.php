@@ -11,6 +11,7 @@
       }else{
         $url = $_SERVER['REQUEST_URI'];
         $url_stripped = str_replace("update.php", "index.php", $url);
+        sleep(3);
         echo "<script>window.location = '$url_stripped'</script>";
       }
     }

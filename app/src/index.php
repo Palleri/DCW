@@ -44,6 +44,16 @@ $(document).on({
 
 <h1><a href=index.php>Dockcheck</a></h1>
 
+<?php
+$conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
+if (!$conn) {
+    echo "An error occurred.\n";
+    exit;
+}
+
+
+
+?>
 
  
 <header>
@@ -55,36 +65,36 @@ $(document).on({
     <table>
       <tr>
         <th class="latest">Containers on latest version:</th>
-        <th></th>
-      </tr>
+        </tr>
+    
       <?php
 
-
-$conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
-if (!$conn) {
-    echo "An error occurred.\n";
-    exit;
-}
-
-$result = pg_query($conn, "SELECT * FROM containers WHERE latest='true'");
-if (!$result) {
-    echo "skit hände.\n";
-    exit;
-}
+$resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers");
 
 
 
+while ( $hosts  = pg_fetch_array($resulthost))
+{
+  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE latest='true'");
+
+    
+    echo '<tr>';
+    echo '<td>'. $hosts["host"] .'</td>';
+    echo '</tr>';
+    
+    
+    
 
 
 while ( $data  = pg_fetch_array($result))
 {
+    
     echo '<tr>';
     echo '<td>'. $data["name"] .'</td>';
-    echo '<td>'. $data["host"] .'</td>';
     echo '</tr>';
+    
 }
-
-
+}
 
         ?>
 
