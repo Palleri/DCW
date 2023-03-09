@@ -69,7 +69,7 @@ if (!$conn) {
     
       <?php
 
-$resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers");
+$resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE latest='true'");
 
 
 
@@ -81,6 +81,7 @@ while ( $hosts  = pg_fetch_array($resulthost))
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
+
     
     
     
@@ -104,37 +105,38 @@ while ( $data  = pg_fetch_array($result))
     <table>
       <tr>
         <th class="update">Containers with updates available:</th>
-        <th></th>
       </tr>
       <?php
 
+$resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE new='true'");
 
-$conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
-if (!$conn) {
-    echo "An error occurred.\n";
-    exit;
-}
 
-$result = pg_query($conn, "SELECT * FROM containers WHERE new='true'");
-if (!$result) {
-    echo "skit hände.\n";
-    exit;
-}
 
+while ( $hosts  = pg_fetch_array($resulthost))
+{
+  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE new='true'");
+
+    
+    echo '<tr>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
+    echo '</tr>';
+
+    
+    
+    
 
 
 while ( $data  = pg_fetch_array($result))
 {
+    
     echo '<tr>';
     echo '<td>'. $data["name"] .'</td>';
-    echo '<td>'. $data["host"] .'</td>';
     echo '</tr>';
+    
+}
 }
 
-
-
         ?>
-
     </table>
 
   </div>
@@ -146,33 +148,37 @@ while ( $data  = pg_fetch_array($result))
     <table>
       <tr>
         <th class="error">Containers with errors, wont get updated:</th>
-        <th></th>
         
       </tr>
       <?php
 
+$resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE error='true'");
 
-$conn = pg_connect("host=localhost port=5432 dbname=postgres user=postgres");
-if (!$conn) {
-  echo "An error occurred.\n";
-  exit;
-}
 
-$result = pg_query($conn, "SELECT * FROM containers WHERE error='true'");
-if (!$result) {
-  echo "skit hände.\n";
-  exit;
-}
+
+while ( $hosts  = pg_fetch_array($resulthost))
+{
+  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE error='true'");
+
+    
+    echo '<tr>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
+    echo '</tr>';
+
+    
+    
+    
+
 
 while ( $data  = pg_fetch_array($result))
 {
-  echo '<tr>';
-  echo '<td>'. $data["name"] .'</td>';
-  echo '<td>'. $data["host"] .'</td>';
-  echo '</tr>';
+    
+    echo '<tr>';
+    echo '<td>'. $data["name"] .'</td>';
+    echo '</tr>';
+    
 }
-
-
+}
 
         ?>
 
