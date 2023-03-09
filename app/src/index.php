@@ -79,7 +79,7 @@ while ( $hosts  = pg_fetch_array($resulthost))
 
     
     echo '<tr>';
-    echo '<td>'. $hosts["host"] .'</td>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
     
     
