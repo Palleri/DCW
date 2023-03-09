@@ -68,32 +68,26 @@ if (!$conn) {
         </tr>
     
       <?php
-
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE latest='true'");
+$hosts  = pg_fetch_all($resulthost);
 
-
-
-while ( $hosts  = pg_fetch_array($resulthost))
-{
-  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE latest='true'");
-
-    
+foreach ($hosts as $host) {
     echo '<tr>';
-    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
 
-    
-    
-    
-
-
-while ( $data  = pg_fetch_array($result))
+$result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE latest='true' AND host='". $host["host"] ."'");
+$data  = pg_fetch_all($result);
+  foreach ($data as $container) {
 {
     
     echo '<tr>';
-    echo '<td>'. $data["name"] .'</td>';
+    echo '<td>'. $container["name"] .'</td>';
     echo '</tr>';
     
+}
+
+
 }
 }
 
@@ -107,35 +101,28 @@ while ( $data  = pg_fetch_array($result))
         <th class="update">Containers with updates available:</th>
       </tr>
       <?php
-
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE new='true'");
+$hosts  = pg_fetch_all($resulthost);
 
-
-
-while ( $hosts  = pg_fetch_array($resulthost))
-{
-  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE new='true'");
-
-    
+foreach ($hosts as $host) {
     echo '<tr>';
-    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
 
-    
-    
-    
-
-
-while ( $data  = pg_fetch_array($result))
+$result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE new='true' AND host='". $host["host"] ."'");
+$data  = pg_fetch_all($result);
+  foreach ($data as $container) {
 {
     
     echo '<tr>';
-    echo '<td>'. $data["name"] .'</td>';
+    echo '<td>'. $container["name"] .'</td>';
     echo '</tr>';
     
 }
-}
 
+
+}
+}
         ?>
     </table>
 
@@ -151,35 +138,28 @@ while ( $data  = pg_fetch_array($result))
         
       </tr>
       <?php
-
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE error='true'");
+$hosts  = pg_fetch_all($resulthost);
 
-
-
-while ( $hosts  = pg_fetch_array($resulthost))
-{
-  $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE error='true'");
-
-    
+foreach ($hosts as $host) {
     echo '<tr>';
-    echo '<td><h style="font-size:20px"><u><strong><b>'. $hosts["host"] .'</b></strong></u></h></td>';
+    echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
 
-    
-    
-    
-
-
-while ( $data  = pg_fetch_array($result))
+$result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE error='true' AND host='". $host["host"] ."'");
+$data  = pg_fetch_all($result);
+  foreach ($data as $container) {
 {
     
     echo '<tr>';
-    echo '<td>'. $data["name"] .'</td>';
+    echo '<td>'. $container["name"] .'</td>';
     echo '</tr>';
     
 }
-}
 
+
+}
+}
         ?>
 
     </table>
