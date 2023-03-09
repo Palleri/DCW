@@ -62,16 +62,19 @@ fi
 
 if [ -f "$NOTIFY_URLS" ]; then
         
-        data='psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE latest='true'"'
-        
-        
+le=$(psql -U postgres -d postgres -AXtqc "SELECT DISTINCT host FROM containers WHERE latest='true';")
+
+for i in {$le}
+do
+psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE latest='true' AND host='$le';"
+
+done
         if [ -n "$data" ]; then
                 
                 
                 if [ -f "$NOTIFY_DEBUG" ]; then
 
-                        sed -i '1i There is updates available for:' /app/notifymsg
-                        notifymsg="$(cat /app/notifymsg | tr -d '\0')"
+
                         
                         apprise -vvvv -t "Dockcheck-web Notify" -b "$data" "$NOTIFY_URLS"
                 else                      
