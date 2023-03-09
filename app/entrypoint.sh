@@ -61,4 +61,5 @@ run-parts /etc/periodic/daily/
 chmod +x /app/watcher.sh
 /app/watcher.sh </dev/null >/dev/null 2>&1 &
 chown -R www-data:www-data /var/www/*
-php-fpm7 -D && lighttpd -D -f /etc/lighttpd/lighttpd.conf 
+php-fpm7 -D
+exec lighttpd -D -f /etc/lighttpd/lighttpd.conf 
