@@ -1,92 +1,78 @@
 #!/bin/bash
 
-
 #Remove everything in database before running dockcheck & set state to running
-        psql -U postgres -d postgres -c "DELETE FROM containers;" 
-        psql -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'true';" > /dev/null 2>&1
+psql -U postgres -d postgres -c "DELETE FROM containers;" 
+psql -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'true';" > /dev/null 2>&1
         
 #If exclude is present
 EXCLUDE=/app/EXCLUDE
 if [ -f "$EXCLUDE" ]; then
-        EXCLUDE=$(</app/EXCLUDE)
-        /app/dockcheck.sh -e $EXCLUDE > /dev/null 2>&1
-
-        else
-#If exclude is not present
-        /app/dockcheck.sh > /dev/null 2>&1
+  EXCLUDE=$(</app/EXCLUDE)
+  /app/dockcheck.sh -e $EXCLUDE > /dev/null 2>&1
+else
+  #If exclude is not present
+  /app/dockcheck.sh > /dev/null 2>&1
 fi
 
 #Check if exporters exists and wait for them
-
 checkactive=$(psql -U postgres -d postgres -AXtqc "SELECT ACTIVE FROM EXPORTERS WHERE ACTIVE='true'";)
 if [[ $checkactive == 'true' ]]; then
-        while true; do
-        checkdone=$(psql -U postgres -d postgres -AXtqc "SELECT DONE FROM EXPORTERS WHERE DONE='true'";)
-        sleep .5
-        echo "Still running!"
-        if [[ $checkdone == 'true' ]]; then
-        echo "All exporters are done!"
-        break
-else
-continue
-fi
-
-done    
-
+  while true; do
+    checkdone=$(psql -U postgres -d postgres -AXtqc "SELECT DONE FROM EXPORTERS WHERE DONE='true'";)
+    sleep .5
+    echo "Still running!"
+    if [[ $checkdone == 'true' ]]; then
+      echo "All exporters are done!"
+      break
+    else
+      continue
+    fi
+  done    
 fi     
 
 #Insert into database with hostname + containers
-        HOSTNAME=$(cat /etc/hostname)
-        cat GotUpdates.txt | while read -r line ; do
-        psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
-        (HOST,NAME,LATEST,ERROR,NEW) \
-        VALUES('$HOSTNAME','$line','false','false','true');" > /dev/null 2>&1
-        done
-        rm -f GotUpdates.txt
-        
-        cat NoUpdates.txt | while read -r line ; do
-        psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
-        (HOST,NAME,LATEST,ERROR,NEW) \
-        VALUES('$HOSTNAME','$line','true','false','false');" > /dev/null 2>&1
-        done
-        rm -f NoUpdates.txt
-     
-        cat GotErrors.txt  | while read -r line ; do
-        psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
-        (HOST,NAME,LATEST,ERROR,NEW) \
-        VALUES('$HOSTNAME','$line','false','true','false');" > /dev/null 2>&1
-        done
-        rm -f GotErrors.txt
+HOSTNAME=$(cat /etc/hostname)
 
+cat GotUpdates.txt | while read -r line ; do
+  psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+  (HOST,NAME,LATEST,ERROR,NEW) \
+  VALUES('$HOSTNAME','$line','false','false','true');" > /dev/null 2>&1
+done
+rm -f GotUpdates.txt
 
+cat NoUpdates.txt | while read -r line ; do
+  psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+  (HOST,NAME,LATEST,ERROR,NEW) \
+  VALUES('$HOSTNAME','$line','true','false','false');" > /dev/null 2>&1
+done
+rm -f NoUpdates.txt
 
+cat GotErrors.txt  | while read -r line ; do
+  psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
+  (HOST,NAME,LATEST,ERROR,NEW) \
+  VALUES('$HOSTNAME','$line','false','true','false');" > /dev/null 2>&1
+done
+rm -f GotErrors.txt
 
 if [ -n "$NOTIFY_URLS" ]; then
-        
-for i in $(psql -U postgres -d postgres -AXtqc "SELECT DISTINCT host FROM containers WHERE new='true';")
-do
-        printf "%s\n" "$i"":"
-        for k in $(psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE new='true' AND host='${i}';")
-        do
-          printf "%s\n" "$k"
-        done
-        printf "%s\n"
-done > /app/containers
-dataresult=$(cat /app/containers)
-
-
-        if [[ -n "$dataresult" ]]; then
-                if [ -n "$NOTIFY_DEBUG" ]; then
-                apprise -vvvv -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
-                rm /app/containers
-                else                      
-                apprise -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
-                rm /app/containers
-                fi
-        fi
-
+  for i in $(psql -U postgres -d postgres -AXtqc "SELECT DISTINCT host FROM containers WHERE new='true';") ; do
+    printf "%s\n" "$i"":"
+    for k in $(psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE new='true' AND host='${i}';") ; do
+      printf "%s\n" "$k"
+    done
+    printf "%s\n"
+  done > /app/containers
+  dataresult=$(cat /app/containers)
+  if [[ -n "$dataresult" ]]; then
+    if [ -n "$NOTIFY_DEBUG" ]; then
+      apprise -vvvv -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
+      rm /app/containers
+    else                      
+      apprise -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
+      rm /app/containers
+    fi
+  fi
 fi
-
 
 #Set running state to false
 psql -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'false';" > /dev/null 2>&1
