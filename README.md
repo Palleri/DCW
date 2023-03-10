@@ -1,11 +1,13 @@
 # DCW (dockcheck-web) with exporters
-
 A webpage showing available image updates for your running containers.
 
 Checking for new images at startup, once a day and via the button "Check for updates".
 
 If dont want gui, just ignore publishing ports.  
 *working on a non-gui version*.
+
+## Exporter (multiple hosts)
+[Palleri/DCW-exporter](https://github.com/Palleri/DCW-exporter)
 
 ## Based on [mag37/dockcheck](https://github.com/mag37/dockcheck)
 
