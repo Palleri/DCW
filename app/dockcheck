@@ -2,7 +2,7 @@
 
 
 #Remove everything in database before running dockcheck & set state to running
-        psql -U postgres -d postgres -c "TRUNCATE TABLE containers;" > /dev/null 2>&1
+        psql -U postgres -d postgres -c "DELETE FROM containers;" 
         psql -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'true';" > /dev/null 2>&1
         
 #If exclude is present
