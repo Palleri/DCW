@@ -1,11 +1,23 @@
 FROM alpine:3.15
+ARG TARGETPLATFORM
 ENV NOTIFY="" \
 NOTIFY_DEBUG="" \
 NOTIFY_URLS="" \
 EXCLUDE="" \
 CRON_TIME="" \
-POSTGRES_PASSWORD=""
-RUN apk --update add --no-cache \
+TOKEN=""
+COPY app* /app/ 
+RUN case ${TARGETPLATFORM} in \
+         "linux/amd64")  os=amd64  ;; \
+         "linux/arm64")  os=arm64  ;; \
+    esac \
+&& case ${TARGETPLATFORM} in \
+         "linux/amd64")  dockeros=x86_64  ;; \
+         "linux/arm64")  dockeros=aarch64  ;; \
+    esac \
+&& wget "https://download.docker.com/linux/static/stable/${dockeros}/docker-23.0.1.tgz" -O /app/docker.tgz \
+&& wget "https://github.com/regclient/regclient/releases/download/v0.4.7/regctl-linux-${os}" -O /app/regctl \
+&& apk --update add --no-cache \
     lighttpd \
     bash \
     curl \
@@ -17,39 +29,20 @@ RUN apk --update add --no-cache \
     php-fpm \
     php-pgsql \
     php-mysqli \
-    #php-sqlite3 \
-    #php-iconv \
-    #php-json \
-    #php-gd \
     php-curl \
-    #php-xml \
-    #php-simplexml \
-    #php-pgsql \
-    #php-imap \
     php-cgi \
     fcgi \
     php-pdo \
-    #php-pdo_sqlite \
     php-pdo_pgsql \
-    #php-soap \
-    #php-xmlrpc \
-    #php-posix \
-    #php-gettext \
-    #php-ldap \
-    #php-ctype \
-    #php-dom && \
     postgresql \
-    && rm -rf /var/cache/apk/* 
-    
-
-COPY app* /app/ 
-ADD lighttpd.conf /etc/lighttpd/lighttpd.conf 
-RUN adduser www-data -G www-data -H -s /bin/bash -D \
-&& curl -L "https://download.docker.com/linux/static/stable/x86_64/docker-23.0.1.tgz" -o /app/docker.tgz \
-&& curl -L "https://github.com/regclient/regclient/releases/download/v0.4.5/regctl-linux-amd64" -o /app/regctl \
+    && rm -rf /var/cache/apk/* \
+&& adduser www-data -G www-data -H -s /bin/bash -D \
 && pip install --no-cache-dir apprise
+ADD lighttpd.conf /etc/lighttpd/lighttpd.conf 
+
 EXPOSE 80
 #VOLUME /var/www
+
 
 
 ENTRYPOINT [ "/app/entrypoint.sh" ]

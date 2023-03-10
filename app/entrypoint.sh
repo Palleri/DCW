@@ -1,6 +1,7 @@
 #!/bin/sh
+trap "exit" SIGINT
+trap "exit" SIGTERM
 
-echo $POSTGRES_PASSWORD
 
 echo "# Starting Dockcheck-web #"
 echo "# Checking for new updates #"

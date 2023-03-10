@@ -1,8 +1,11 @@
-# dockcheck-web
+# DCW (dockcheck-web) with exporters
 
 A webpage showing available image updates for your running containers.
 
 Checking for new images at startup, once a day and via the button "Check for updates".
+
+If dont want gui, just ignore publishing ports
+*working on a non-gui version*
 
 ## Based on [mag37/dockcheck](https://github.com/mag37/dockcheck)
 
@@ -29,9 +32,9 @@ docker-compose.yml
 ```yml
 version: '3.2'
 services:
-  dockcheck-web:
-    container_name: dockcheck-web
-    image: 'palleri/dockcheck-web:latest'
+  dcw:
+    container_name: dcw
+    image: 'palleri/dcw:latest'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -40,8 +43,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
-      NOTIFY: "true"
-      NOTIFY_URLS: "discord://Dockcheck-web@xxxxx/xxxxxx"
+      TOKEN: superSecretPassw0rd                        // required // Also used by the exporter
+      NOTIFY: "true"                                    // optional
+      NOTIFY_URLS: "discord://Dockcheck@xxxxx/xxxxxx"   // optional
+      NOTIFY_DEBUG: true                                // optional
+      HTTP_PROXY: "http://proxy.homelab.net:3128"       // optional
+      HTTPS_PROXY: "http://proxy.homelab.net:3128"      // optional
+      EXCLUDE: "nginx,plex,prowlarr"                    // optional // Exclude containers from being checked for updates
+      CRON_TIME: "12:56"                                // optional
 ```
 
 # Security concern
@@ -49,42 +58,7 @@ For more security add the :ro to volumes docker.sock
 
 Use with care, make sure you keep this container safe and do not publish on the internet.
 
-# Proxy
-### If you want to use proxy you can use HTTP_PROXY environment variable
 
-```yml
-version: '3.2'
-services:
-  ...
-    environment:  
-      HTTP_PROXY: "http://proxy.homelab.net:3128"
-      HTTPS_PROXY: "http://proxy.homelab.net:3128"
-  ...
-```
-
-
-# Date & Timezone
-### If cron is not running at the correct time 12:30 make sure this is applied
-
-```yml
-version: '3.2'
-services:
-  ...
-    volumes:  
-      - /etc/localtime:/etc/localtime:ro
-  ...
-```
-Might also need timezone
-
-```yml
-version: '3.2'
-services:
-  ...
-    volumes:  
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-  ...
-```
 
 # Notifications
 This image use [apprise](https://github.com/caronc/apprise) for notifications
@@ -95,6 +69,9 @@ Set `NOTIFY: true` to enable notifications
 Set `NOTIFY_DEBUG: true` to enable DEBUG mode. Be carefull, your tokens and passwords might be visible in docker logs
 
 Set `NOTIFY_URLS: "tgram://0123456789:RandomLettersAndNumbers-2morestuff-123456789"`
+
+Set `EXCLUDE: "nginx,plex,prowlarr"` if you want to exclude containers from being checked for updates
+Use the name on each container in comma separated variable
 
 ### Setup Example for Telegram <img src="https://github.com/walkxcode/dashboard-icons/blob/main/png/telegram.png" width="26"> 
 Start a chat with `@BotFather` and follow the guided steps.   
@@ -137,18 +114,6 @@ services:
   ...
 ```
 
-### Exclude containers from update check
-Use the name on each container in comma separated variable `EXCLUDE`.
-```yml
-version: '3.2'
-services:
-  ...
-    environment:
-      NOTIFY: "true"
-      NOTIFY_URLS: "discord://Dockcheck-web@xxxxx/xxxxxx"
-      EXCLUDE: "nginx,plex,prowlarr"
-  ...
-```
 
 ### Example for multiple urls
 
@@ -159,18 +124,6 @@ services:
     environment:
       NOTIFY: "true"
       NOTIFY_URLS: "discord://Dockcheck-web@xxxxx/xxxxxx tgram://0123456789:RandomLettersAndNumbers-2morestuff-123456789"
-  ...
-```
-### Set your own notification time
-
-```yml
-version: '3.2'
-services:
-  ...
-    environment:
-      CRON_TIME: "12:56"
-      NOTIFY: "true"
-      NOTIFY_URLS: "discord://Dockcheck@xxxxx/xxxxxx tgram://0123456789:RandomLettersAndNumbers-2morestuff-123456789"
   ...
 ```
 
@@ -273,7 +226,7 @@ This is what worked for me
 | Feature | Timeline | Stage |
 | --- | :---: | :---: |
 | Update via webgui | Unknown (Need Help) | |
-| Multiple hosts one gui | Unknown | |
+| Multiple hosts one gui | 2023-03-* | Alpha |
 
 * Update via webui
   - Need help with how to make docker.sock recreate docker-compose without the need for docker-compose.yml

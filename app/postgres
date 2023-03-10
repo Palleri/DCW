@@ -18,14 +18,14 @@ chown -R postgres:postgres /var/lib/postgresql
 su postgres -c "pg_ctl start -D /var/lib/postgresql/data"
 
 
-if [ -n $POSTGRES_PASSWORD ]; then
-psql -d postgres -U postgres -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';"
-psql -d postgres -U postgres -c "CREATE TABLE CONTAINERS(HOST TEXT,NAME TEXT,LATEST TEXT,ERROR TEXT,NEW TEXT);"
+if [ -n $TOKEN ]; then
+psql -d postgres -U postgres -c "ALTER USER postgres WITH PASSWORD '$TOKEN';" > /dev/null 2>&1
+psql -d postgres -U postgres -c "CREATE TABLE CONTAINERS(HOST TEXT,NAME TEXT,LATEST TEXT,ERROR TEXT,NEW TEXT);" > /dev/null 2>&1
 
-psql -d postgres -U postgres -c "CREATE TABLE EXPORTERS(HOST TEXT,ACTIVE TEXT,DONE TEXT);"
+psql -d postgres -U postgres -c "CREATE TABLE EXPORTERS(HOST TEXT,ACTIVE TEXT,DONE TEXT);" > /dev/null 2>&1
 
-psql -d postgres -U postgres -c "CREATE TABLE STATE(RUNNING TEXT NOT NULL);"
-psql -d postgres -U postgres -c "INSERT INTO STATE (RUNNING) VALUES('false');"
+psql -d postgres -U postgres -c "CREATE TABLE STATE(RUNNING TEXT NOT NULL);" > /dev/null 2>&1
+psql -d postgres -U postgres -c "INSERT INTO STATE (RUNNING) VALUES('false');" > /dev/null 2>&1
 else
 echo "Postgres password cannot be empty"
 fi
