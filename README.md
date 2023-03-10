@@ -4,7 +4,7 @@ A webpage showing available image updates for your running containers.
 
 Checking for new images at startup, once a day and via the button "Check for updates".
 
-If dont want gui, just ignore publishing ports
+If dont want gui, just ignore publishing ports  
 *working on a non-gui version*
 
 ## Based on [mag37/dockcheck](https://github.com/mag37/dockcheck)
