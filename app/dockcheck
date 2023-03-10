@@ -9,13 +9,11 @@
 EXCLUDE=/app/EXCLUDE
 if [ -f "$EXCLUDE" ]; then
         EXCLUDE=$(</app/EXCLUDE)
-        /app/dockcheck.sh -e $EXCLUDE | sed -r "s:\x1B\[[0-9;]*[mK]::g" > /app/containers_temp
-        cat /app/containers_temp > /app/containers
+        /app/dockcheck.sh -e $EXCLUDE 
 
         else
 #If exclude is not present
-        /app/dockcheck.sh | sed -r "s:\x1B\[[0-9;]*[mK]::g" > /app/containers_temp
-        cat /app/containers_temp > /app/containers
+        /app/dockcheck.sh 
 fi
 
 #Check if exporters exists and wait for them
@@ -60,29 +58,30 @@ fi
 
 
 
-if [ -f "$NOTIFY_URLS" ]; then
+if [ -n "$NOTIFY_URLS" ]; then
         
-le=$(psql -U postgres -d postgres -AXtqc "SELECT DISTINCT host FROM containers WHERE latest='true';")
-
-for i in {$le}
+for i in $(psql -U postgres -d postgres -AXtqc "SELECT DISTINCT host FROM containers WHERE new='true';")
 do
-psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE latest='true' AND host='$le';"
+        printf "%s\n" "$i"":"
+        for k in $(psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE new='true' AND host='${i}';")
+        do
+          printf "%s\n" "$k"
+        done
+        printf "%s\n"
+done > /app/containers
+dataresult=$(cat /app/containers)
 
-done
-        if [ -n "$data" ]; then
-                
-                
-                if [ -f "$NOTIFY_DEBUG" ]; then
 
-
-                        
-                        apprise -vvvv -t "Dockcheck-web Notify" -b "$data" "$NOTIFY_URLS"
+        if [[ -n "$dataresult" ]]; then
+                if [ -n "$NOTIFY_DEBUG" ]; then
+                apprise -vvvv -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
+                rm /app/containers
                 else                      
-                        
-                        apprise -t "Dockcheck-web Notify" -b "$data" "$NOTIFY_URLS"
-                        
+                apprise -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
+                rm /app/containers
                 fi
         fi
+
 fi
 
 

@@ -70,7 +70,7 @@ if (!$conn) {
       <?php
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE latest='true'");
 $hosts  = pg_fetch_all($resulthost);
-
+if (!empty($hosts)) {
 foreach ($hosts as $host) {
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
@@ -90,7 +90,7 @@ $data  = pg_fetch_all($result);
 
 }
 }
-
+}
         ?>
 
     </table>
@@ -104,6 +104,7 @@ $data  = pg_fetch_all($result);
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE new='true'");
 $hosts  = pg_fetch_all($resulthost);
 
+if (!empty($hosts)) {
 foreach ($hosts as $host) {
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
@@ -123,6 +124,8 @@ $data  = pg_fetch_all($result);
 
 }
 }
+
+}
         ?>
     </table>
 
@@ -140,7 +143,7 @@ $data  = pg_fetch_all($result);
       <?php
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE error='true'");
 $hosts  = pg_fetch_all($resulthost);
-
+if (!empty($hosts)) {
 foreach ($hosts as $host) {
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
@@ -158,6 +161,7 @@ $data  = pg_fetch_all($result);
 }
 
 
+}
 }
 }
         ?>
