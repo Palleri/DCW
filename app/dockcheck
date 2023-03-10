@@ -4,11 +4,10 @@
 psql -U postgres -d postgres -c "DELETE FROM containers;" 
 psql -U postgres -d postgres -c "UPDATE STATE SET RUNNING = 'true';" > /dev/null 2>&1
         
-#If exclude is present
-EXCLUDE=/app/EXCLUDE
-if [ -f "$EXCLUDE" ]; then
+if [ -f "/app/EXCLUDE" ]; then
+  #If exclude is present
   EXCLUDE=$(</app/EXCLUDE)
-  /app/dockcheck.sh -e $EXCLUDE > /dev/null 2>&1
+  /app/dockcheck.sh -e "$EXCLUDE" > /dev/null 2>&1
 else
   #If exclude is not present
   /app/dockcheck.sh > /dev/null 2>&1
@@ -60,7 +59,7 @@ if [ -n "$NOTIFY_URLS" ]; then
     for k in $(psql -U postgres -d postgres -AXtqc "SELECT name FROM containers WHERE new='true' AND host='${i}';") ; do
       printf "%s\n" "$k"
     done
-    printf "%s\n"
+    printf "\n"
   done > /app/containers
   dataresult=$(cat /app/containers)
   if [[ -n "$dataresult" ]]; then
