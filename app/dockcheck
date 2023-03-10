@@ -42,18 +42,21 @@ fi
         (HOST,NAME,LATEST,ERROR,NEW) \
         VALUES('$HOSTNAME','$line','false','false','true');" > /dev/null 2>&1
         done
+        rm -f GotUpdates.txt
         
         cat NoUpdates.txt | while read -r line ; do
         psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
         (HOST,NAME,LATEST,ERROR,NEW) \
         VALUES('$HOSTNAME','$line','true','false','false');" > /dev/null 2>&1
         done
+        rm -f NoUpdates.txt
      
         cat GotErrors.txt  | while read -r line ; do
         psql -U postgres -d postgres -c "INSERT INTO CONTAINERS \
         (HOST,NAME,LATEST,ERROR,NEW) \
         VALUES('$HOSTNAME','$line','false','true','false');" > /dev/null 2>&1
         done
+        rm -f GotErrors.txt
 
 
 
