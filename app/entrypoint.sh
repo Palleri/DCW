@@ -63,8 +63,8 @@ chmod +x /app/watcher.sh
 chown -R www-data:www-data /var/www/*
 php-fpm7 -D
 if [ -n "$EXCLUDE" ]; then
-    exec /app/dockcheck -e $EXCLUDE
+    /app/dockcheck -e $EXCLUDE
     else
-    exec /app/dockcheck
+    /app/dockcheck
 fi
 exec lighttpd -D -f /etc/lighttpd/lighttpd.conf 
