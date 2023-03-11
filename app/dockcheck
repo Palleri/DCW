@@ -15,12 +15,12 @@ fi
 
 #Check if exporters exists and wait for them
 checkactive=$(psql -U postgres -d postgres -AXtqc "SELECT ACTIVE FROM EXPORTERS WHERE ACTIVE='true'";)
-if [[ $checkactive == 'true' ]]; then
+if [[ $checkactive == *'true'* ]]; then
   while true; do
-    checkdone=$(psql -U postgres -d postgres -AXtqc "SELECT DONE FROM EXPORTERS WHERE DONE='true'";)
+    checkdone=$(psql -U postgres -d postgres -AXtqc "SELECT DONE FROM EXPORTERS WHERE DONE='false'";)
     sleep .5
     echo "Still running!"
-    if [[ $checkdone == 'true' ]]; then
+    if [[ $checkdone != *'false'* ]]; then
       echo "All exporters are done!"
       break
     else
