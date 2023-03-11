@@ -108,6 +108,7 @@ if (!empty($hosts)) {
 foreach ($hosts as $host) {
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
+    echo '<td><a href=update.php?update='. $container["name"] .' target=\'_blank\'>update</a></td>';
     echo '</tr>';
 
 $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE new='true' AND host='". $host["host"] ."'");

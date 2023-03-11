@@ -1,6 +1,17 @@
-<?php 
+<?php
 
-  $create_file_update = fopen("/var/www/update.txt", "w") or die("Unable to open file!");
+if (isset($_GET['update']) )
+{
+
+        ob_start();
+$command=passthru('/usr/bin/python3 /app/test.py --container '. $_POST['update'] .'');
+
+
+
+/*
+}else {
+        echo "Normal update script";
+/*  $create_file_update = fopen("/var/www/update.txt", "w") or die("Unable to open file!");
   $txt = '1';
   fwrite($create_file_update, $txt);
   $read_file = file_get_contents('/var/www/update.txt');
@@ -17,4 +28,6 @@
     }
   }
 
+ */
+}
 ?>
