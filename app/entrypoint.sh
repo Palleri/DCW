@@ -58,9 +58,13 @@ chmod +x /app/dockcheck*
 chmod +x /app/regctl
 mv /app/regctl /usr/bin/regctl
 cp /app/dockcheck /etc/periodic/daily
-run-parts /etc/periodic/daily/
 chmod +x /app/watcher.sh
 /app/watcher.sh </dev/null >/dev/null 2>&1 &
 chown -R www-data:www-data /var/www/*
 php-fpm7 -D
+if [ -n "$EXCLUDE" ]; then
+    exec /app/dockcheck -e $EXCLUDE
+    else
+    exec /app/dockcheck
+fi
 exec lighttpd -D -f /etc/lighttpd/lighttpd.conf 
