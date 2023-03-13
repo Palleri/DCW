@@ -6,7 +6,7 @@ trap "exit" SIGTERM
 echo "# Starting Dockcheck-web #"
 echo "# Checking for new updates #"
 echo "# This might take a while, it depends on how many containers are running #"
-
+cp /app/root /etc/crontabs/root
 if [ -n "$HOSTNAME" ]; then
         echo $HOSTNAME > /etc/hostname
 fi
@@ -14,9 +14,9 @@ if [ -n "$CRON_TIME" ]; then
     
     hour=$(echo $CRON_TIME | grep -Po "\d*(?=:)")
     minute=$(echo $CRON_TIME | grep -Po "(?<=:)\d*")
-    echo -e "\n$minute  $hour   *   *   *   run-parts /etc/periodic/daily" >> /app/root
+    echo -e "\n$minute  $hour   *   *   *   run-parts /etc/periodic/daily" >> /etc/crontabs/root
     else
-    echo -e "\n30 12  *   *   *   run-parts /etc/periodic/daily" >> /app/root 
+    echo -e "\n30 12  *   *   *   run-parts /etc/periodic/daily" >> /etc/crontabs/root
 fi
 if [ "$NOTIFY" = "true" ]; then
     if [ -n "$NOTIFY_URLS" ]; then
@@ -52,8 +52,8 @@ chmod +x /app/watcher.sh
 /app/watcher.sh </dev/null >/dev/null 2>&1 &
 chown -R www-data:www-data /var/www/*
 rc-service crond start && rc-update add crond
-rm -rf /etc/crontabs/root
-cp /app/root /etc/crontabs/root
+#rm -rf /etc/crontabs/root
+#cp /app/root /etc/crontabs/root
 crond -b
 php-fpm7 -D
 /app/dockcheck
