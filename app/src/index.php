@@ -114,6 +114,7 @@ echo '</details>';
     <table>
       <tr>
         <th class="update">Containers with updates available:</th>
+        <th></th>
       </tr>
       <?php
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE new='true'");
@@ -123,7 +124,7 @@ if (!empty($hosts)) {
 foreach ($hosts as $host) {
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
-    echo '<td><a href=update.php?update='. $container["name"] .' target=\'_blank\'>update</a></td>';
+    echo '<td></td>';
     echo '</tr>';
 
 $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE new='true' AND host='". $host["host"] ."'");
@@ -133,6 +134,7 @@ $data  = pg_fetch_all($result);
     
     echo '<tr>';
     echo '<td>'. $container["name"] .'</td>';
+    echo '<td><a href=update.php?update='. $container["name"] .' target=\'_blank\'>Pull and upgrade</a></td>';
     echo '</tr>';
     
 }

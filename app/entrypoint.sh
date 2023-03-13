@@ -44,6 +44,7 @@ cp /app/src/index.php /var/www/index.php
 cp /app/src/style.css /var/www/style.css
 cp /app/src/update.php /var/www/update.php
 cp /app/src/jquery.js /var/www/jquery.js
+touch /var/www/upgrade.txt
 chmod +x /app/dockcheck*
 chmod +x /app/regctl
 mv /app/regctl /usr/bin/regctl

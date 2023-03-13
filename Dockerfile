@@ -39,7 +39,7 @@ RUN case ${TARGETPLATFORM} in \
     postgresql \
     && rm -rf /var/cache/apk/* \
 && adduser www-data -G www-data -H -s /bin/bash -D \
-&& pip install --no-cache-dir apprise
+&& pip install --no-cache-dir apprise docker
 ADD lighttpd.conf /etc/lighttpd/lighttpd.conf 
 
 EXPOSE 80
