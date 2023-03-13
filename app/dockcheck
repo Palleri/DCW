@@ -63,7 +63,7 @@ if [ -n "$NOTIFY_URLS" ]; then
   done > /app/containers
   dataresult=$(cat /app/containers)
   if [[ -n "$dataresult" ]]; then
-    if [ -n "$NOTIFY_DEBUG" ]; then
+    if [ "$NOTIFY_DEBUG" = "true" ]; then
       apprise -vvvv -t "Dockcheck-web Notify" -b "$dataresult" "$NOTIFY_URLS"
       rm /app/containers
     else                      

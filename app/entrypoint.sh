@@ -34,7 +34,6 @@ fi
 chmod +x /app/postgres
 /app/postgres > /dev/null 2>&1
 touch /var/www/update.txt
-cp /app/root /etc/crontabs/root
 cp /app/php.ini /etc/php7/php.ini
 cd /app && tar xzvf /app/docker.tgz > /dev/null 2>&1 && cp /app/docker/* /usr/bin/ > /dev/null 2>&1
 rm /app/docker.tgz
@@ -47,14 +46,12 @@ cp /app/src/jquery.js /var/www/jquery.js
 touch /var/www/upgrade.txt
 chmod +x /app/dockcheck*
 chmod +x /app/regctl
-mv /app/regctl /usr/bin/regctl
+cp /app/regctl /usr/bin/regctl
 cp /app/dockcheck /etc/periodic/daily
 chmod +x /app/watcher.sh
 /app/watcher.sh </dev/null >/dev/null 2>&1 &
 chown -R www-data:www-data /var/www/*
 rc-service crond start && rc-update add crond
-#rm -rf /etc/crontabs/root
-#cp /app/root /etc/crontabs/root
 crond -b
 php-fpm7 -D
 /app/dockcheck
