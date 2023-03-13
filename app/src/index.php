@@ -62,39 +62,54 @@ if (!$conn) {
 </header>
 <div class="row">
   <div class="column">
-    <table>
-      <tr>
+
+         
+<table>
+    
+    <tr>
         <th class="latest">Containers on latest version:</th>
         </tr>
-    
+</table>
       <?php
 $resulthost = pg_query($conn, "SELECT DISTINCT host FROM containers WHERE latest='true'");
 $hosts  = pg_fetch_all($resulthost);
 if (!empty($hosts)) {
 foreach ($hosts as $host) {
+    
+  
+    echo '<details>';
+    echo '<summary>';
+    echo '<table>';
     echo '<tr>';
     echo '<td><h style="font-size:20px"><u><strong><b>'. $host["host"] .'</b></strong></u></h></td>';
     echo '</tr>';
-
+    echo '</table>';
+    echo '</summary>';
+    echo '<table>';
 $result = pg_query($conn, "SELECT DISTINCT NAME FROM containers WHERE latest='true' AND host='". $host["host"] ."'");
 $data  = pg_fetch_all($result);
   foreach ($data as $container) {
-{
     
     echo '<tr>';
     echo '<td>'. $container["name"] .'</td>';
     echo '</tr>';
     
-}
+    
 
 
 }
+echo '</table>';
+echo '</details>';
 }
+
 }
+
         ?>
 
-    </table>
+    
+
   </div>
+  
   <div class="column">
     <table>
       <tr>

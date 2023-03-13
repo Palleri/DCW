@@ -54,6 +54,7 @@ services:
       EXCLUDE: "nginx,plex,prowlarr"                    // optional // Exclude containers from being checked for updates
       CRON_TIME: "12:56"                                // optional
 ```
+The container and exporter are communicating via port tcp/5432  
 
 # Security concern
 For more security add the :ro to volumes docker.sock
