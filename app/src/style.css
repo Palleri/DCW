@@ -315,3 +315,22 @@ button {
     font-size: 16;
     border: 2px solid #00000054;
   }
+  slot:not([name]) {
+    display: none;
+  }
+  /* Either the fallback summary (inside the shadow tree), or the slotted main
+     summary. */
+  summary,
+  slot[name=internal-main-summary]::slotted(summary) {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: disclosure-closed outside;
+  }
+  :host([open]) summary,
+  :host([open]) slot[name=internal-main-summary]::slotted(summary) {
+    list-style-type: disclosure-open;
+  }
+  :host([open]) slot:not([name]) {
+    display: revert;
+  }
+  

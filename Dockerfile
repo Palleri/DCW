@@ -21,6 +21,8 @@ RUN case ${TARGETPLATFORM} in \
     lighttpd \
     bash \
     curl \
+    busybox-initscripts \
+    openrc \
     vim \
     py-pip \
     inotify-tools \
