@@ -1,32 +1,37 @@
 <?php
 
-if (isset($_GET['update']) )
+if (isset($_GET['upgrade']) )
 {
-
-#ob_start();
-#$command=passthru('/usr/bin/python3 /app/test.py --container '. $_POST['update'] .'');
-
 $create_file_upgrade = fopen("/var/www/upgrade.txt", "w") or die("Unable to open file!");
-  $txt_upgrade = $_GET['update'];
+  $txt_upgrade = $_GET['upgrade'];
   fwrite($create_file_upgrade, $txt_upgrade);
-  if(file_exists("/var/www/upgrade.txt")){
-    while(file_exists("/var/www/upgrade.txt")){
-      
-      if(file_exists("/var/www/upgrade.txt")){
-      }else{
+  $read_file = file_get_contents('/var/www/upgrade.txt');
+  if($read_file != '1'){
+
+    while($read_file != '1'){
+      $read_file = file_get_contents('/var/www/upgrade.txt');
+      if(strpos($read_file, '1') !== false){
+        
         $url = $_SERVER['REQUEST_URI'];
-        $url_stripped = str_replace("update.php", "index.php", $url);
+        $url_stripped = str_replace("update.php?upgrade=". $txt_upgrade ."", "index.php", $url);
         sleep(3);
         echo "<script>window.location = '$url_stripped'</script>";
+        break;
+      }else{
+        continue;
+
       }
     }
   }
 
 
-/*
-}else {
-        echo "Normal update script";
-/*  $create_file_update = fopen("/var/www/update.txt", "w") or die("Unable to open file!");
+
+}
+
+if (isset($_GET['update']) )
+{
+        
+  $create_file_update = fopen("/var/www/update.txt", "w") or die("Unable to open file!");
   $txt = '1';
   fwrite($create_file_update, $txt);
   $read_file = file_get_contents('/var/www/update.txt');
@@ -43,6 +48,6 @@ $create_file_upgrade = fopen("/var/www/upgrade.txt", "w") or die("Unable to open
     }
   }
 
- */
+ 
 }
 ?>

@@ -9,7 +9,7 @@ while inotifywait -e modify /var/www/*.txt ; do
         else
         container=$(</var/www/upgrade.txt)
         /usr/bin/python3 /app/dockerpull.py --container $container
-        echo "" > /var/www/upgrade.txt
+        echo "1" > /var/www/upgrade.txt
         chown www-data:www-data /var/www/upgrade
         fi
 done

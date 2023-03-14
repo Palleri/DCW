@@ -7,13 +7,21 @@
     <script src="jquery.js"></script>
 <script>
 
-$(document).on("click", "button", function(){   
-    $.get("update.php", function(data){
+$(document).on("click", ".upgrade", function(){ 
+    var value = $(this).val(); 
+    $.get("update.php?upgrade=" + value, function(data){
+    $(".loading-container hide").html(data);
+    $(".content").html(data);
+   });
+
+});
+
+$(document).on("click", ".update-btn", function(){   
+    $.get("update.php?update", function(data){
         $(".loading-container hide").html(data);
         $(".content").html(data);
     });       
 });
-
 
 $(document).on({
     ajaxStart: function(){
@@ -26,10 +34,35 @@ $(document).on({
         $(".loading-container").addClass("hide");
         $(".loading").addClass("hide");
         $("#loading-text").addClass("hide");
-        $(".content").RemoveClass("hide");
+        $(".content").removeClass("hide");
         location.reload(true);
     }    
 });
+
+
+//$(document).on("click", "button", function(){   
+//    $.get("update.php", function(data){
+//        $(".loading-container hide").html(data);
+//        $(".content").html(data);
+//    });       
+//});
+//
+//
+//$(document).on({
+//    ajaxStart: function(){
+//        $(".loading-container").removeClass("hide");
+//        $(".loading").removeClass("hide");
+//        $("#loading-text").removeClass("hide");
+//        $(".content").addClass("hide");
+//    },
+//    ajaxStop: function(){ 
+//        $(".loading-container").addClass("hide");
+//        $(".loading").addClass("hide");
+//        $("#loading-text").addClass("hide");
+//        $(".content").removeClass("hide");
+//        location.reload(true);
+//    }    
+//});
 </script>
 
     </head>
@@ -57,7 +90,7 @@ if (!$conn) {
 
  
 <header>
-<h1><button type="button">Check for updates</button></h1>
+<h1><button class="update-btn" type="button">Check for updates</button></h1>
   <!-- <h1><div id="updates" href=index.php?update>Check for updates</a></h1></div -->
 </header>
 <div class="row">
@@ -134,7 +167,7 @@ $data  = pg_fetch_all($result);
     
     echo '<tr>';
     echo '<td>'. $container["name"] .'</td>';
-    echo '<td><a href=update.php?update='. $container["name"] .' target=\'_blank\'>Pull and upgrade</a></td>';
+    echo '<td><button class="upgrade" value="'. $container["name"] .'" type="button">Update</button></td>';
     echo '</tr>';
     
 }
