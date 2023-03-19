@@ -40,20 +40,20 @@ services:
     restart: unless-stopped
     ports:
       - '80:80'
-      - '5432:5432' // only required if exporter is being used
+      - '5432:5432' # only required if exporter is being used
     volumes:
       - ./data:/var/www/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
     environment:
-      TOKEN: superSecretPassw0rd                        // required // Also used by the exporter
-      NOTIFY: "true"                                    // optional
-      NOTIFY_URLS: "discord://Dockcheck@xxxxx/xxxxxx"   // optional
-      NOTIFY_DEBUG: true                                // optional
-      HTTP_PROXY: "http://proxy.homelab.net:3128"       // optional
-      HTTPS_PROXY: "http://proxy.homelab.net:3128"      // optional
-      EXCLUDE: "nginx,plex,prowlarr"                    // optional // Exclude containers from being checked for updates
-      CRON_TIME: "12:56"                                // optional
+      TOKEN: superSecretPassw0rd                        # required // Also used by the exporter
+      NOTIFY: "true"                                    # optional
+      NOTIFY_URLS: "discord://Dockcheck@xxxxx/xxxxxx"   # optional
+      NOTIFY_DEBUG: true                                # optional
+      HTTP_PROXY: "http://proxy.homelab.net:3128"       # optional
+      HTTPS_PROXY: "http://proxy.homelab.net:3128"      # optional
+      EXCLUDE: "nginx,plex,prowlarr"                    # optional // Exclude containers from being checked for updates
+      CRON_TIME: "12:56"                                # optional
 ```
 The container and exporter are communicating via port tcp/5432  
 
