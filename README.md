@@ -40,6 +40,7 @@ services:
     restart: unless-stopped
     ports:
       - '80:80'
+      - '5432:5432' // only required if exporter is being used
     volumes:
       - ./data:/var/www/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
