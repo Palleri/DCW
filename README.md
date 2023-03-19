@@ -40,7 +40,7 @@ services:
     restart: unless-stopped
     ports:
       - '80:80'
-      - '5432:5432' # only required if exporter is being used
+      - '5432:5432' # only required with exporters // communication between DCW and exporters
     volumes:
       - ./data:/var/www/html
       - /var/run/docker.sock:/var/run/docker.sock:ro
