@@ -27,7 +27,7 @@ This image use [dockcheck](https://github.com/mag37/dockcheck) provided by Mag37
 
 ----
 
-![](https://github.com/Palleri/dockcheck-web/blob/main/dcwgif.gif)
+![](https://raw.githubusercontent.com/Palleri/DCW/main/gifdcw.gif)
 
 
 docker-compose.yml
