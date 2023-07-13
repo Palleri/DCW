@@ -23,14 +23,16 @@ if [ "$NOTIFY" = "true" ]; then
         echo $NOTIFY_URLS > /app/NOTIFY_URLS
         echo "Notify activated"
     fi
-    if [ -n "$EXCLUDE" ]; then
-    echo $EXCLUDE > /app/EXCLUDE
-    fi
+
     if [ "$NOTIFY_DEBUG" = "true" ]; then
         echo $NOTIFY_DEBUG > /app/NOTIFY_DEBUG
         echo "NOTIFY DEBUGMODE ACTIVATED"  
     fi
 fi
+if [ -n "$EXCLUDE" ]; then
+    echo $EXCLUDE > /app/EXCLUDE
+fi
+
 chmod +x /app/postgres
 /app/postgres > /dev/null 2>&1
 touch /var/www/update.txt
