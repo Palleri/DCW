@@ -37,6 +37,7 @@ services:
   dcw:
     container_name: dcw
     image: 'palleri/dcw:latest'
+    hostname: DCW                    # optional, the hostname will be displayed in the ui
     restart: unless-stopped
     ports:
       - '80:80'
