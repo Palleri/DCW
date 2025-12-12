@@ -1,59 +1,50 @@
 #!/bin/sh
-trap "exit" SIGINT
-trap "exit" SIGTERM
+set -e
 
+trap "exit 0" SIGINT SIGTERM
 
 echo "# Starting Dockcheck-web #"
 echo "# Checking for new updates #"
 echo "# This might take a while, it depends on how many containers are running #"
+
+# Load default cron root
 cp /app/root /etc/crontabs/root
-if [ -n "$HOSTNAME" ]; then
-        echo $HOSTNAME > /etc/hostname
-fi
+
+# Set hostname if provided
+[ -n "$HOSTNAME" ] && echo "$HOSTNAME" > /etc/hostname
+
+# Cron time parsing
 if [ -n "$CRON_TIME" ]; then
-    
-    hour=$(echo $CRON_TIME | grep -Po "\d*(?=:)")
-    minute=$(echo $CRON_TIME | grep -Po "(?<=:)\d*")
-    echo -e "\n$minute  $hour   *   *   *   run-parts /etc/periodic/daily" >> /etc/crontabs/root
-    else
-    echo -e "\n30 12  *   *   *   run-parts /etc/periodic/daily" >> /etc/crontabs/root
+    hour="${CRON_TIME%:*}"
+    minute="${CRON_TIME#*:}"
+else
+    hour="12"
+    minute="30"
 fi
+printf "\n%s %s * * * run-parts /etc/periodic/daily\n" "$minute" "$hour" >> /etc/crontabs/root
+
+# Notification settings
 if [ "$NOTIFY" = "true" ]; then
-    if [ -n "$NOTIFY_URLS" ]; then
-        echo $NOTIFY_URLS > /app/NOTIFY_URLS
-        echo "Notify activated"
-    fi
-
-    if [ "$NOTIFY_DEBUG" = "true" ]; then
-        echo $NOTIFY_DEBUG > /app/NOTIFY_DEBUG
-        echo "NOTIFY DEBUGMODE ACTIVATED"  
-    fi
-fi
-if [ -n "$EXCLUDE" ]; then
-    echo $EXCLUDE > /app/EXCLUDE
+    [ -n "$NOTIFY_URLS" ] && printf "%s" "$NOTIFY_URLS" > /app/NOTIFY_URLS && echo "Notify activated"
+    [ "$NOTIFY_DEBUG" = "true" ] && printf "%s" "$NOTIFY_DEBUG" > /app/NOTIFY_DEBUG && echo "NOTIFY DEBUGMODE ACTIVATED"
 fi
 
-chmod +x /app/postgres
-/app/postgres > /dev/null 2>&1
-touch /var/www/update.txt
-cp /app/php.ini /etc/php7/php.ini
-cd /app && tar xzvf /app/docker.tgz > /dev/null 2>&1 && cp /app/docker/* /usr/bin/ > /dev/null 2>&1
-rm /app/docker.tgz
-mkdir -p /run/lighttpd/
-chown www-data. /run/lighttpd/
-cp /app/src/index.php /var/www/index.php
-cp /app/src/style.css /var/www/style.css
-cp /app/src/update.php /var/www/update.php
-cp /app/src/jquery.js /var/www/jquery.js
-chmod +x /app/dockcheck*
-chmod +x /app/regctl
-cp /app/regctl /usr/bin/regctl
-cp /app/dockcheck /etc/periodic/daily
-chmod +x /app/watcher.sh
-/app/watcher.sh </dev/null >/dev/null 2>&1 &
-chown -R www-data:www-data /var/www/*
-rc-service crond start && rc-update add crond
+[ -n "$EXCLUDE" ] && printf "%s" "$EXCLUDE" > /app/EXCLUDE
+
+# Initialize Postgres (suppress errors)
+[ -x /app/postgres ] && /app/postgres >/dev/null 2>&1 || true
+
+# Start cron in background
 crond -b
-php-fpm7 -D
-/app/dockcheck
-exec lighttpd -D -f /etc/lighttpd/lighttpd.conf 
+
+# Start PHP-FPM
+php-fpm83 -D
+
+# Start watcher in background
+/app/watcher.sh </dev/null >/dev/null 2>&1 &
+
+# Run dockcheck once
+[ -x /app/dockcheck ] && /app/dockcheck
+
+# Start lighttpd in foreground
+exec lighttpd -D -f /etc/lighttpd/lighttpd.conf

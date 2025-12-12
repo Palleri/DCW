@@ -255,3 +255,4 @@ This is what worked for me
 * Contributors
   - [Mag37](https://github.com/Mag37) 👑
   - [t0rnis](https://github.com/t0rnis) 🪖🐛
+  - [aSilentSniper](https://github.com/aSilentSniper)
